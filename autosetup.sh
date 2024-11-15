@@ -1,6 +1,11 @@
 #!/bin/bash
 #the main packages
 install_stage=(
+    qt5
+    fcitx5
+    fcitx5-im
+    fcitx5-chinese-addons
+    openssh
     cava
     neofetch
     neovim
@@ -212,6 +217,8 @@ if [[ $INST == "Y" || $INST == "y" ]]; then
     echo -e "$CNT - Enabling the SDDM Service..."
     sudo systemctl enable sddm &>> $INSTLOG
     sleep 2
+
+    sudo systemctl enable sshd.service
     
 fi
 
@@ -254,11 +261,21 @@ if [[ $CFG == "Y" || $CFG == "y" ]]; then
     # git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
     # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    cp ./.zshrc ~/.zshrc
+    # cp ./.zshrc ~/.zshrc
     # cp ~/.zshrc ~/.zshrc.bak 
     # sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
     # sed -i 's/^plugins=(.*)/plugins=()'
-
+    #
+    # fcitx5 config
+    echo "配置fcitx5"
+	echo "
+GTK_IM_MODULE=fcitx
+QT_IM_MODULE=fcitx
+XMODIFIERS=@im=fcitx
+INPUT_METHOD=fcitx
+SDL_IM_MODULE=fcitx
+GLFW_IM_MODULE=ibus
+" | sudo tee -a /etc/environment > /dev/null
     echo -e "$CNT - Copying successful!"
 fi
 

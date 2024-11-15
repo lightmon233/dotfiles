@@ -243,8 +243,8 @@ if [[ $CFG == "Y" || $CFG == "y" ]]; then
     # # 运行不了的原因是sudo只给echo提权了，没有给>>提权
     # # sudo echo "[Theme]" >> /etc/sddm.conf
     # # sudo echo "Current=sddm-sugar-candy" >> /etc/sddm.conf
-    # echo "[THEME]" | sudo tee -a /etc/sddm.conf
-    # echo "Current=sddm-sugar-candy" | sudo tee -a /etc/sddm.conf
+    # echo "[Theme]" | sudo tee -a /etc/sddm.conf.d/sddm.conf
+    # echo "Current=sddm-sugar-candy" | sudo tee -a /etc/sddm.conf.d/sddm.conf
     # sudo cp ~/backgrounds/wallhaven-vmyzkl.jpg /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds
     # sudo sed -i '3s/Mountain.jpg/wallhaven-vmyzkl.jpg/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
     # sudo systemctl enable sddm.service
@@ -267,15 +267,15 @@ if [[ $CFG == "Y" || $CFG == "y" ]]; then
     # sed -i 's/^plugins=(.*)/plugins=()'
     #
     # fcitx5 config
-    echo "配置fcitx5"
-	echo "
-GTK_IM_MODULE=fcitx
-QT_IM_MODULE=fcitx
-XMODIFIERS=@im=fcitx
-INPUT_METHOD=fcitx
-SDL_IM_MODULE=fcitx
-GLFW_IM_MODULE=ibus
-" | sudo tee -a /etc/environment > /dev/null
+#     echo "配置fcitx5"
+# 	echo "
+# GTK_IM_MODULE=fcitx
+# QT_IM_MODULE=fcitx
+# XMODIFIERS=@im=fcitx
+# INPUT_METHOD=fcitx
+# SDL_IM_MODULE=fcitx
+# GLFW_IM_MODULE=ibus
+# " | sudo tee -a /etc/environment > /dev/null
     echo -e "$CNT - Copying successful!"
 fi
 

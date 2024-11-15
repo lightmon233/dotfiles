@@ -59,7 +59,7 @@ install_stage=(
     noto-fonts-emoji 
     lxappearance 
     xfce4-settings
-    nwg-look-bin
+    nwg-look
     sddm
     wayland-screenshot
     grimshot
@@ -80,7 +80,6 @@ install_stage=(
     optimus-manager
     flameshot
     mpd
-    envycontrol # switch gpu in wayland mode
     linux-zen-headers # required when u use dkms to install nvidia modules
     pipewire-alsa
 )

@@ -276,6 +276,11 @@ if [[ $CFG == "Y" || $CFG == "y" ]]; then
 # SDL_IM_MODULE=fcitx
 # GLFW_IM_MODULE=ibus
 # " | sudo tee -a /etc/environment > /dev/null
+#   
+    git clone https://gitlab.com/imnotpua/grub_gtg.git ~/grub_gtg
+    sudo ~/grub_gtg/install.sh
+
     echo -e "$CNT - Copying successful!"
+
 fi
 

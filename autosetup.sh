@@ -216,20 +216,32 @@ fi
 read -rep $'[\e[1;33mACTION\e[0m] - Would you like to copy config files? (y,n) ' CFG
 if [[ $CFG == "Y" || $CFG == "y" ]]; then
     echo -e "$CNT - Copying config files..."
+    #
+    # # downloading neovim config
+    # echo "下载neovim配置"
+    # git clone https://github.com/lightmon233/nvim ~/.config/
+    #
+    # # coping wallpapers
+    # echo "拷贝壁纸..."
+    # cp -r ./backgrounds ~/
+    # 
+    # # installing sddm theme(sddm-sugar-candy)
+    # echo "安装sddm-sugar-candy主题..."
+    # git clone https://github.com/Kangie/sddm-sugar-candy ~/sddm-sugar-candy
+    # sudo cp -r ~/sddm-sugar-candy /usr/share/sddm/themes/
+    # sudo touch /etc/sddm.conf
+    # # 运行不了的原因是sudo只给echo提权了，没有给>>提权
+    # # sudo echo "[Theme]" >> /etc/sddm.conf
+    # # sudo echo "Current=sddm-sugar-candy" >> /etc/sddm.conf
+    # echo "[THEME]" | sudo tee -a /etc/sddm.conf
+    # echo "Current=sddm-sugar-candy" | sudo tee -a /etc/sddm.conf
+    # sudo cp ~/backgrounds/wallhaven-vmyzkl.jpg /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds
+    # sudo sed -i '3s/Mountain.jpg/wallhaven-vmyzkl.jpg/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
 
-    # coping wallpapers
-    mkdir -p ~/Backgrounds
-    cp -r ./Backgrounds/ ~/Backgrounds/
-    mkdir -p ~/Lockscreens
-    cp -r ./Lockscreens/ ~/Lockscreens/
-    
-    # installing sddm theme(sddm-sugar-candy)
-    git clone https://framagit.org/MarianArlt/sddm-sugar-candy.git ~/sddm-sugar-candy
-    sudo -r ~/sddm-sugar-candy /usr/share/sddm/themes/
-    sudo touch /etc/sddm.conf
-    sudo echo "[Theme]" >> /etc/sddm.conf
-    sudo echo "Current=sddm-sugar-candy" >> /etc/sddm.conf
-    sudo sed -i '3s/Mountain.jpg/~\/Backgrounds\/wallhaven-vmyzkl.jpg/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
+
+    # .config files
+    echo "拷贝.config配置文件"
+    cp -r ./config/* ~/.config
 
     echo -e "$CNT - Copying successful!"
 fi

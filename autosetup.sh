@@ -82,6 +82,9 @@ install_stage=(
     mpd
     linux-zen-headers # required when u use dkms to install nvidia modules
     pipewire-alsa
+    wget
+    curl
+    pokemon-colorscripts-git
 )
 
 # set some colors
@@ -237,11 +240,24 @@ if [[ $CFG == "Y" || $CFG == "y" ]]; then
     # echo "Current=sddm-sugar-candy" | sudo tee -a /etc/sddm.conf
     # sudo cp ~/backgrounds/wallhaven-vmyzkl.jpg /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds
     # sudo sed -i '3s/Mountain.jpg/wallhaven-vmyzkl.jpg/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
+    # sudo systemctl enable sddm.service
 
-
-    # .config files
-    echo "拷贝.config配置文件"
-    cp -r ./config/* ~/.config
+    #
+    # # .config files
+    # echo "拷贝.config配置文件"
+    # cp -r ./config/* ~/.config
+    # echo "拷贝vim，tmux等配置文件"
+    # cp -r ./.*  ~/
+    #
+    # echo "配置oh-my-zsh及其插件"
+    # sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    # git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+    # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    cp ./.zshrc ~/.zshrc
+    # cp ~/.zshrc ~/.zshrc.bak 
+    # sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+    # sed -i 's/^plugins=(.*)/plugins=()'
 
     echo -e "$CNT - Copying successful!"
 fi

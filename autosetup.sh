@@ -30,7 +30,7 @@ CAC="[\e[1;33mACTION\e[0m]"
 INSTLOG="install.log"
 
 # ==============================================================================
-# 2. 核心辅助工具函数
+# 2. 核心辅助工具函数（已加入自动跳过机制）
 # ==============================================================================
 
 # 进度条显示（通过检测 PID 是否存活）
@@ -44,25 +44,36 @@ show_progress() {
     sleep 1
 }
 
-# 软件安装核心逻辑
+# 软件安装核心逻辑（加入不可用软件自动跳过）
 install_software() {
     local pkg=$1
+    
+    # 1. 检查本地是否已经安装
     if yay -Q "$pkg" &>> /dev/null ; then
         echo -e "$COK - $pkg 已经安装."
+        return 0
+    fi
+
+    # 2. 检查远程软件源（包括 AUR）中是否存在这个包
+    # yay -Si 可以同时检查官方源和 AUR，如果返回非 0 说明源里没有这个包
+    if ! yay -Si "$pkg" &>> /dev/null ; then
+        echo -e "$CWR - 软件源中未找到包 '$pkg' (可能已被下架或更名)，已自动跳过。"
+        return 0
+    fi
+
+    # 3. 确认源里有包，开始安装
+    echo -en "$CNT - 正在安装 $pkg "
+    yay -S --noconfirm "$pkg" &>> "$INSTLOG" &
+    show_progress $!
+    
+    # 4. 再次验证是否安装成功
+    if yay -Q "$pkg" &>> /dev/null ; then
+        echo -e "\e[1A\e[K$COK - $pkg 安装成功."
     else
-        echo -en "$CNT - 正在安装 $pkg "
-        yay -S --noconfirm "$pkg" &>> "$INSTLOG" &
-        show_progress $!
-        
-        if yay -Q "$pkg" &>> /dev/null ; then
-            echo -e "\e[1A\e[K$COK - $pkg 安装成功."
-        else
-            echo -e "\e[1A\e[K$CER - $pkg 安装失败，请检查 $INSTLOG"
-            exit 1
-        fi
+        # 如果源里有但安装失败了（比如编译报错、网络中断），我们依然选择提示而不退出
+        echo -e "\e[1A\e[K$CER - $pkg 安装过程中出错，已跳过。请检查 $INSTLOG"
     fi
 }
-
 # 提示确认函数
 confirm_action() {
     local message=$1

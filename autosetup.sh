@@ -21,12 +21,12 @@ INSTALL_STAGE=(
 )
 
 # Terminal colored status tags
-CNT="[\e[1;36mNOTE\e[0m]"
-COK="[\e[1;32mOK\e[0m]"
-CER="[\e[1;31mERROR\e[0m]"
-CAT="[\e[1;37mATTENTION\e[0m]"
-CWR="[\e[1;35mWARNING\e[0m]"
-CAC="[\e[1;33mACTION\e[0m]"
+CNT="[\e[1;36mNOTE\e[0m]"       # 青色 (Cyan) - 提示信息
+COK="[\e[1;32mOK\e[0m]"         # 绿色 (Green) - 成功
+CER="[\e[1;31mERROR\e[0m]"      # 红色 (Red) - 错误
+CAT="[\e[1;33mATTENTION\e[0m]"  # 黄色 (Yellow) - 【已修复】亮黄色，任何背景下都极明显
+CWR="[\e[1;35mWARNING\e[0m]"    # 紫色 (Magenta) - 警告
+CAC="[\e[1;34mACTION\e[0m]"     # 蓝色 (Blue) - 【优化】改为蓝色，与动作交互更配
 INSTLOG="install.log"
 
 # Get current real user (not root)

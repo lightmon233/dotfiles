@@ -171,14 +171,14 @@ copy_config_files() {
     
     echo -e "[Theme]\nCurrent=sddm-sugar-candy" | sudo tee /etc/sddm.conf.d/sddm.conf > /dev/null
     
-    if [ -f "~/backgrounds/wallhaven-vmyzkl.jpg" ]; then
-        sudo cp ~/backgrounds/wallhaven-vmyzkl.jpg /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds/
+    if [ -f "~/Wallpapers/wallhaven-vmyzkl.jpg" ]; then
+        sudo cp ~/Wallpapers/wallhaven-vmyzkl.jpg /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds/
         sudo sed -i 's/Background=.*/Background="wallhaven-vmyzkl.jpg"/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
     fi
 
     # 4. 拷贝本地基础 Dotfiles（修复了原先 .* 误拷贝上级目录的 Bug）
     echo "-> 拷贝基础本地配置文件..."
-    [ -d "./config" ] && cp -r ./config/* ~/.config/
+    [ -d "./config" ] && cp -r ./.config/* ~/.config/
     # 安全地拷贝当前目录下除 . 和 .. 之外的所有隐藏文件
     find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ~/ \;
     

@@ -17,7 +17,7 @@ INSTALL_STAGE=(
     grimshot swaybg pyprland obs-studio cliphist wl-clipboard polkit-gnome 
     udiskie ueberzug shellcheck w3m imagemagick i3-gaps i3lock polybar 
     optimus-manager flameshot mpd linux-zen-headers pipewire-alsa wget curl 
-    pokemon-colorscripts-git
+    pokemon-colorscripts-git hyprland
 )
 
 # Terminal colored status tags
@@ -26,7 +26,7 @@ COK="[\e[1;32mOK\e[0m]"         # 绿色 (Green) - 成功
 CER="[\e[1;31mERROR\e[0m]"      # 红色 (Red) - 错误
 CAT="[\e[1;33mATTENTION\e[0m]"  # 黄色 (Yellow) - 【已修复】亮黄色，任何背景下都极明显
 CWR="[\e[1;35mWARNING\e[0m]"    # 紫色 (Magenta) - 警告
-CAC="[\e[1;34mACTION\e[0m]"     # 蓝色 (Blue) - 【优化】改为蓝色，与动作交互更配
+CAC=$'[\e[1;34mACTION\e[0m]'     # 蓝色 (Blue) - 【优化】改为蓝色，与动作交互更配
 INSTLOG="install.log"
 
 # Get current real user (not root)

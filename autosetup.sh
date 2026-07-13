@@ -33,6 +33,15 @@ INSTLOG="install.log"
 # 2. Core Helper Functions
 # ==============================================================================
 
+# Sudo session keep-alive (runs in background to avoid any sudo expiration)
+keep_sudo_alive() {
+    while true; do
+        sudo -n true
+        sleep 50
+        kill -0 "$$" 2>/dev/null || exit
+    done
+}
+
 # Progress indicator (checks if PID is still alive)
 show_progress() {
     local pid=$1
@@ -44,7 +53,7 @@ show_progress() {
     sleep 1
 }
 
-# Software installation logic with auto-skip for unavailable packages
+# Software installation logic (Runs in background, safely uses validated sudo token)
 install_software() {
     local pkg=$1
     
@@ -56,13 +65,14 @@ install_software() {
 
     # 2. Check if package exists in repositories (including AUR)
     if ! yay -Si "$pkg" &>> /dev/null ; then
-        echo -e "$CWR - Package '$pkg' not found in repositories (may be removed/renamed). Skipping."
+        echo -e "$CWR - Package '$pkg' not found in repositories. Skipping."
         return 0
     fi
 
-    # 3. Package exists, proceed to install
+    # 3. Package exists, install in background with show_progress.
+    # --sudoloop forces yay to use the existing validated sudo session safely.
     echo -en "$CNT - Installing $pkg "
-    yay -S --noconfirm "$pkg" &>> "$INSTLOG" &
+    yay -S --noconfirm --sudoloop "$pkg" >> "$INSTLOG" 2>&1 &
     show_progress $!
     
     # 4. Double check if installation succeeded
@@ -130,7 +140,10 @@ install_all_packages() {
         return 0
     fi
 
-    echo -e "$CNT - Starting core system components installation. This might take a while..."
+    echo -e "$CNT - Starting core system components installation..."
+    # Clear or initialize log file
+    > "$INSTLOG"
+    
     for SOFTWR in "${INSTALL_STAGE[@]}"; do
         install_software "$SOFTWR"
     done
@@ -175,12 +188,12 @@ copy_config_files() {
         sudo sed -i 's/Background=.*/Background="wallhaven-vmyzkl.jpg"/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
     fi
 
-    # 4. Copy Local Dotfiles (Bugfix: safely ignores '.' and '..')
+    # 4. Copy Local Dotfiles
     echo "-> Copying basic local configuration files..."
     [ -d "./config" ] && cp -r ./config/* ~/.config/
     find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ~/ \;
     
-    # 5. Zsh & Oh My Zsh Automation (Bugfix: runs unattended to prevent terminal blocking)
+    # 5. Zsh & Oh My Zsh Automation
     echo "-> Configuring oh-my-zsh and plugins..."
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -223,8 +236,22 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
 main() {
     clear
     echo -e "$CNT - Welcome to Arch Linux Automated Deployment Script"
-    echo -e "$CNT - Parts of this script require sudo privileges. Feel free to review the source code anytime."
+    echo -e "$CNT - This script requires sudo privileges. Please enter your password when prompted."
     sleep 1
+
+    # Ask for sudo once at the very beginning
+    echo -e "$CAT - Authenticating sudo privileges..."
+    if ! sudo -v; then
+        echo -e "$CER - Sudo authentication failed. Exiting."
+        exit 1
+    fi
+
+    # Start the background loop to keep sudo authenticated indefinitely
+    keep_sudo_alive &
+    SUDO_PID=$!
+    
+    # Ensure background process is killed when script exits
+    trap 'kill "$SUDO_PID" 2>/dev/null' EXIT
 
     if ! confirm_action "Are you sure you want to start the installation?"; then
         echo -e "$CNT - Script exited. No changes were made to your system."

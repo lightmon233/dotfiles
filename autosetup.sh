@@ -158,8 +158,8 @@ copy_config_files() {
     
     # 2. 壁纸部署
     echo "-> 拷贝壁纸..."
-    if [ -d "./backgrounds" ]; then
-        cp -r ./backgrounds ~/
+    if [ -d "./Wallpapers" ]; then
+        cp -r ./Wallpapers ~/
     fi
     
     # 3. SDDM 主题配置

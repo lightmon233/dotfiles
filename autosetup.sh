@@ -29,18 +29,12 @@ CWR="[\e[1;35mWARNING\e[0m]"
 CAC="[\e[1;33mACTION\e[0m]"
 INSTLOG="install.log"
 
+# Get current real user (not root)
+REAL_USER=$(logname || echo "$USER")
+
 # ==============================================================================
 # 2. Core Helper Functions
 # ==============================================================================
-
-# Sudo session keep-alive (runs in background to avoid any sudo expiration)
-keep_sudo_alive() {
-    while true; do
-        sudo -n true
-        sleep 50
-        kill -0 "$$" 2>/dev/null || exit
-    done
-}
 
 # Progress indicator (checks if PID is still alive)
 show_progress() {
@@ -53,7 +47,7 @@ show_progress() {
     sleep 1
 }
 
-# Software installation logic (Runs in background, safely uses validated sudo token)
+# Software installation logic
 install_software() {
     local pkg=$1
     
@@ -70,9 +64,8 @@ install_software() {
     fi
 
     # 3. Package exists, install in background with show_progress.
-    # --sudoloop forces yay to use the existing validated sudo session safely.
     echo -en "$CNT - Installing $pkg "
-    yay -S --noconfirm --sudoloop "$pkg" >> "$INSTLOG" 2>&1 &
+    yay -S --noconfirm "$pkg" >> "$INSTLOG" 2>&1 &
     show_progress $!
     
     # 4. Double check if installation succeeded
@@ -141,7 +134,6 @@ install_all_packages() {
     fi
 
     echo -e "$CNT - Starting core system components installation..."
-    # Clear or initialize log file
     > "$INSTLOG"
     
     for SOFTWR in "${INSTALL_STAGE[@]}"; do
@@ -191,7 +183,7 @@ copy_config_files() {
     # 4. Copy Local Dotfiles
     echo "-> Copying basic local configuration files..."
     [ -d "./config" ] && cp -r ./config/* ~/.config/
-    find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ~/ \;
+    find . -maxdepth 1 -name ".*" ! -name "." ! -name "..-exec cp -r {} ~/ \;"
     
     # 5. Zsh & Oh My Zsh Automation
     echo "-> Configuring oh-my-zsh and plugins..."
@@ -236,22 +228,29 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
 main() {
     clear
     echo -e "$CNT - Welcome to Arch Linux Automated Deployment Script"
-    echo -e "$CNT - This script requires sudo privileges. Please enter your password when prompted."
-    sleep 1
-
-    # Ask for sudo once at the very beginning
-    echo -e "$CAT - Authenticating sudo privileges..."
-    if ! sudo -v; then
-        echo -e "$CER - Sudo authentication failed. Exiting."
+    
+    # 拒绝直接使用 sudo 运行本脚本
+    if [ "$EUID" -eq 0 ]; then
+        echo -e "$CER - Please DO NOT run this script with sudo directly."
+        echo -e "$CNT - Run it as normal user: ./autosetup.sh"
         exit 1
     fi
 
-    # Start the background loop to keep sudo authenticated indefinitely
-    keep_sudo_alive &
-    SUDO_PID=$!
+    echo -e "$CNT - This script requires sudo privileges once at startup to unlock full automation."
+    sleep 1
+
+    # Handshake with sudo to get temporary passwordless privilege
+    echo -e "$CAT - Authenticating sudo privileges..."
+    if sudo -v; then
+        # Dynamically inject temporary passwordless rule for the current user
+        echo "$REAL_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-autosetup-tmp > /dev/null
+    else
+        echo -e "$CER - Sudo authentication failed. Exiting."
+        exit 1
+    fi
     
-    # Ensure background process is killed when script exits
-    trap 'kill "$SUDO_PID" 2>/dev/null' EXIT
+    # Safety Net: Ensure the passwordless rule is completely removed upon exit/interruption
+    trap 'sudo rm -f /etc/sudoers.d/99-autosetup-tmp 2>/dev/null' EXIT
 
     if ! confirm_action "Are you sure you want to start the installation?"; then
         echo -e "$CNT - Script exited. No changes were made to your system."
@@ -260,7 +259,7 @@ main() {
     
     sudo touch /tmp/hyprv.tmp
 
-    # Executing operational stages
+    # Executing operational stages flawlessly with zero pass prompts
     setup_pacman_and_yay
     install_all_packages
     copy_config_files

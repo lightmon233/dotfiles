@@ -182,7 +182,7 @@ copy_config_files() {
 
     # 4. Copy Local Dotfiles
     echo "-> Copying basic local configuration files..."
-    [ -d "./config" ] && cp -r ./config/* ~/.config/
+    [ -d "./.config" ] && cp -r ./.config/* ~/.config/
     find . -maxdepth 1 -name ".*" ! -name "." ! -name "..-exec cp -r {} ~/ \;"
     
     # 5. Zsh & Oh My Zsh Automation

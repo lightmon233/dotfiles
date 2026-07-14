@@ -1,0 +1,36 @@
+# ==============================================================================
+# Pyprland Configuration (Migrated from JSON to TOML)
+# ==============================================================================
+
+[pyprland]
+plugins = [
+    "scratchpads",
+    "monitors",
+    "workspaces_follow_focus"
+]
+
+# ------------------------------------------------------------------------------
+# Scratchpads (Dropdown Windows)
+# ------------------------------------------------------------------------------
+[scratchpads.term]
+command = "kitty --class kitty-dropterm"
+animation = "fromTop"
+unfocus = "hide"
+size = "75% 60%"          # 完美的无痛替代方案：在这里直接控制下拉终端大小！
+lazy = true
+
+[scratchpads.volume]
+command = "pavucontrol"
+animation = "fromRight"
+unfocus = "hide"
+size = "45% 45%"          # 在这里直接控制调音台大小！
+lazy = true
+
+# ------------------------------------------------------------------------------
+# Monitors Layout Management
+# ------------------------------------------------------------------------------
+[monitors]
+unknown = "wlrlui"
+
+[monitors.placement]
+"BenQ PJ" = { topOf = "VGA-1" }

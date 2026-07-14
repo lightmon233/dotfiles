@@ -177,7 +177,7 @@ copy_config_files() {
     
     if [ -f "$HOME/Wallpapers/wallhaven-vmyzkl.jpg" ]; then
         sudo cp "$HOME/Wallpapers/wallhaven-vmyzkl.jpg" /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds/
-        sudo sed -i 's/Background=.*/Background="Backgrounds/wallhaven-vmyzkl.jpg"/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
+        sudo sed -i 's/Background=.*/Background="Backgrounds\/wallhaven-vmyzkl.jpg"/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
     fi
 
     # 4. Copy Local Dotfiles

@@ -1,16 +1,26 @@
-#! /bin/bash
-is_cava_ServerExist=`ps -ef|grep -m 1 cava|grep -v "grep"|wc -l`
-if [ "$is_cava_ServerExist" = "0" ]; then
-	echo "cava_server not found" > /dev/null 2>&1
-#	exit;
-elif [ "$is_cava_ServerExist" = "1" ]; then
-  killall cava
+#!/bin/bash
+
+# 1. 延迟 0.5 秒启动，避开开机时 Hyprland 刚初始化的真空期
+sleep 0.5
+
+# 2. 严格的清理机制：脚本退出时自动杀掉后台的 cava 并清理临时文件
+cleanup() {
+    # 杀掉脚本产生的所有后台任务（即 cava）
+    kill $(jobs -p) 2>/dev/null
+    rm -f "/tmp/cava.fifo"
+    rm -f "/tmp/waybar_cava_config"
+}
+trap cleanup EXIT INT TERM
+
+# 检查并杀掉系统里可能残留的旧 cava 进程
+if pgrep -x "cava" >/dev/null; then
+    killall -9 cava 2>/dev/null
 fi
 
 bar="▁▂▃▄▅▆▇█"
 dict="s/;//g;"
 
-# creating "dictionary" to replace char with bar
+# 创建替换字符的“字典”
 i=0
 while [ $i -lt ${#bar} ]
 do
@@ -18,14 +28,12 @@ do
     i=$((i=i+1))
 done
 
-# make sure to clean pipe
+# 确保清理并重新创建 FIFO 管道
 pipe="/tmp/cava.fifo"
-if [ -p $pipe ]; then
-    unlink $pipe
-fi
+rm -f $pipe
 mkfifo $pipe
 
-# write cava config
+# 写入 cava 临时配置文件
 config_file="/tmp/waybar_cava_config"
 echo "
 [general]
@@ -37,10 +45,11 @@ data_format = ascii
 ascii_max_range = 7
 " > $config_file
 
-# run cava in the background
-cava -p $config_file &
+# 3. 关键改动：使用 >/dev/null 2>&1 且将后台进程的 stdin 重定向为 /dev/null
+# 这样能彻底防止 cava 在后台尝试去读写终端（防止产生 TTY 控制字符）
+cava -p "$config_file" >/dev/null 2>&1 < /dev/null &
 
-# reading data from fifo
+# 读取管道并输出
 while read -r cmd; do
-    echo $cmd | sed $dict
-done < $pipe
+    echo "$cmd" | sed "$dict"
+done < "$pipe"

@@ -200,8 +200,9 @@ copy_config_files() {
     
     # Overwrite and adjust .zshrc
     [ -f "./.zshrc" ] && cp ./.zshrc ~/.zshrc
-    sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
-    sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc
+    # No need to replace these lines, since they are already included in .zshrc
+    # sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+    # sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc
     
     # 6. Fcitx5 Environment Setup
     echo "-> Setting up fcitx5 environment variables..."

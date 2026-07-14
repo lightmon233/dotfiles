@@ -5,18 +5,18 @@
 # ==============================================================================
 INSTALL_STAGE=(
     qt5 fcitx5 fcitx5-im fcitx5-chinese-addons openssh cava fastfetch neovim ranger 
-    rofi alsa-utils xclip kitty go-musicfox wqy-zenhei adobe-source-han-serif-cn-fonts 
-    adobe-source-han-sans-cn-fonts noto-fonts-cjk powerline-fonts ttf-font-awesome 
+    rofi alsa-utils xclip kitty wqy-zenhei adobe-source-han-serif-cn-fonts 
+    adobe-source-han-sans-cn-fonts noto-fonts-cjk powerline-fonts 
     wqy-bitmapfont wqy-microhei wqy-microhei-lite adobe-source-code-pro-fonts 
-    ttf-ms-fonts noto-fonts-emoji google-chrome baidunetdisk-bin gparted ksnip 
-    shotgun zsh waybar swww swaylock wofi wlogout xdg-desktop-portal-hyprland 
+    ttf-ms-fonts noto-fonts-emoji google-chrome gparted ksnip 
+    shotgun zsh waybar swaylock wofi wlogout xdg-desktop-portal-hyprland 
     swappy grim slurp thunar btop firefox thunderbird mpv pamixer pavucontrol 
     brightnessctl bluez bluez-utils blueman network-manager-applet gvfs 
     thunar-archive-plugin file-roller starship papirus-icon-theme lxappearance 
-    ttf-jetbrains-mono-nerd xfce4-settings nwg-look sddm wayland-screenshot 
-    grimshot swaybg pyprland obs-studio cliphist wl-clipboard polkit-gnome 
-    udiskie ueberzug shellcheck w3m imagemagick i3-gaps i3lock polybar 
-    optimus-manager flameshot mpd linux-zen-headers pipewire-alsa wget curl 
+    ttf-jetbrains-mono-nerd xfce4-settings nwg-look sddm
+    swaybg pyprland obs-studio cliphist wl-clipboard polkit-gnome 
+    udiskie ueberzug shellcheck w3m imagemagick i3lock polybar 
+    flameshot mpd linux-zen-headers pipewire-alsa wget curl 
     pokemon-colorscripts-git hyprland
 )
 
@@ -142,7 +142,7 @@ install_all_packages() {
 
     echo -e "$CNT - Enabling system services..."
     sudo systemctl enable --now bluetooth.service &>> "$INSTLOG"
-    sudo systemctl enable --now sddm.service &>> "$INSTLOG"
+    sudo systemctl enable sddm.service &>> "$INSTLOG"
     sudo systemctl enable --now sshd.service &>> "$INSTLOG"
 }
 
@@ -177,7 +177,7 @@ copy_config_files() {
     
     if [ -f "$HOME/Wallpapers/wallhaven-vmyzkl.jpg" ]; then
         sudo cp "$HOME/Wallpapers/wallhaven-vmyzkl.jpg" /usr/share/sddm/themes/sddm-sugar-candy/Backgrounds/
-        sudo sed -i 's/Background=.*/Background="wallhaven-vmyzkl.jpg"/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
+        sudo sed -i 's/Background=.*/Background="Backgrounds/wallhaven-vmyzkl.jpg"/' /usr/share/sddm/themes/sddm-sugar-candy/theme.conf
     fi
 
     # 4. Copy Local Dotfiles

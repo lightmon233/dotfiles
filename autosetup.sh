@@ -16,7 +16,7 @@ INSTALL_STAGE=(
     ttf-jetbrains-mono-nerd xfce4-settings nwg-look sddm
     swaybg pyprland obs-studio cliphist wl-clipboard polkit-gnome 
     udiskie ueberzug shellcheck w3m imagemagick i3lock polybar 
-    flameshot mpd linux-zen-headers pipewire-alsa wget curl 
+    flameshot mpd linux-zen-headers pipewire-alsa pipewire-pulse wget curl 
     pokemon-colorscripts-git hyprland
 )
 

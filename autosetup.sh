@@ -184,6 +184,7 @@ copy_config_files() {
     echo "-> Copying basic local configuration files..."
     [ -d "./.config" ] && cp -r ./.config/* ~/.config/
     find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ~/ \;
+    chmod +x ~/.config/waybar/cava-internal.sh
 
     # 5. Zsh & Oh My Zsh Automation
     echo "-> Configuring oh-my-zsh and plugins..."

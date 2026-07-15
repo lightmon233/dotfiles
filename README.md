@@ -24,10 +24,10 @@ and cd into it:
 cd dotfiles
 ```
 
-### Make the scripts runnable
+### Make the script runnable
 
 ```bash
-find . -name "*.sh" -exec chmod +x {} +
+sudo chmod +x ./autosetup.sh
 ```
 
 ### Run `autosetup.sh` as prompted

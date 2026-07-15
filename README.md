@@ -36,7 +36,7 @@ sudo chmod +x ./autosetup.sh
 ./autosetup.sh
 ```
 
-> [!ATTENTION]
+> [!CAUTION]
 > Do not use sudo to run this script, you will be prompted to give the sudo privilege while the script is running.
 
 ## Preview

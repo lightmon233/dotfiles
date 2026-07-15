@@ -45,6 +45,6 @@ find . -name "*.sh" -exec chmod +x {} +
 
 ## To-DO List
 
-- [ ] Fix `autosetup.sh` double asking passwd issue.
+- [x] Fix `autosetup.sh` double asking passwd issue.
 - [ ] Migrate hyprland config to lua.
 - [ ] Restore & Repair i3wm configs.

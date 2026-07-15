@@ -13,7 +13,7 @@ INSTALL_STAGE=(
 
     # --- 桌面环境配套与外挂组件 ---
     waybar rofi wofi wlogout swaybg lxappearance nwg-look sddm xfce4-settings
-    polkit-gnome udiskie cliphist network-manager-applet
+    polkit-gnome udiskie cliphist network-manager-applet dunst
 
     # --- 终端、Shell 与开发环境 ---
     kitty zsh starship neovim nodejs tree-sitter-cli npm
@@ -34,7 +34,7 @@ INSTALL_STAGE=(
     firefox thunderbird google-chrome mpv
 
     # --- 截图、录屏与图像处理 ---
-    flameshot ksnip shotgun swappy grim slurp obs-studio
+    flameshot ksnip shotgun swappy grim slurp obs-studio scrot
 
     # --- 内核头文件 (驱动/特定模块编译所需) ---
     linux-zen-headers

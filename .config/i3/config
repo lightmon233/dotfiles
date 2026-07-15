@@ -198,7 +198,7 @@ exec --no-startup-id picom -b
 exec --no-startup-id feh --randomize --bg-fill ~/Wallpapers
 
 bindsym $mod+b exec --no-startup-id "feh --randomize --bg-fill ~/Wallpapers"
-bindsym Mod4+Shift+s exec --no-startup-id "flameshot gui"
+bindsym Mod4+Shift+s exec --no-startup-id "mkdir -p ~/Screenshots && scrot -s ~/Screenshots/%Y-%m-%d_%H-%M-%S.png"
 
 exec_always --no-startup-id fcitx5
 
@@ -217,7 +217,7 @@ exec --no-startup-id ~/.config/polybar/launch.sh --hack
 # drop down terminal
 
 for_window [instance="dropdown"] floating enable
-for_window [instance="dropdown"] resize set 600 400
+for_window [instance="dropdown"] resize set 900 500
 for_window [instance="dropdown"] move scratchpad
 for_window [instance="dropdown"] border pixel 3
 exec_always --no-startup-id kitty --name dropdown

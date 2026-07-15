@@ -183,8 +183,8 @@ copy_config_files() {
     # 4. Copy Local Dotfiles
     echo "-> Copying basic local configuration files..."
     [ -d "./.config" ] && cp -r ./.config/* ~/.config/
-    find . -maxdepth 1 -name ".*" ! -name "." ! -name "..-exec cp -r {} ~/ \;"
-    
+    find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ~/ \;
+
     # 5. Zsh & Oh My Zsh Automation
     echo "-> Configuring oh-my-zsh and plugins..."
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -240,17 +240,21 @@ main() {
     echo -e "$CNT - This script requires sudo privileges once at startup to unlock full automation."
     sleep 1
 
-    # Handshake with sudo to get temporary passwordless privilege
+    # 【修复重点】使用 sudo 自带的 SUDO_USER 变量，如果为空则回退到当前 USER
+    local EFFECTIVE_USER="${SUDO_USER:-$USER}"
+
     echo -e "$CAT - Authenticating sudo privileges..."
-    if sudo -v; then
-        # Dynamically inject temporary passwordless rule for the current user
-        echo "$REAL_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-autosetup-tmp > /dev/null
+    
+    # 【优雅合并】一次性通过 sudo 验证并直接写入免密规则，绝不触发第二次弹窗
+    if sudo sh -c "echo '$EFFECTIVE_USER ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/99-autosetup-tmp"; then
+        echo -e "$COK - Sudo passwordless privilege granted temporarily."
     else
         echo -e "$CER - Sudo authentication failed. Exiting."
         exit 1
     fi
     
-    # Safety Net: Ensure the passwordless rule is completely removed upon exit/interruption
+    # 安全网：确保退出或中断时清理免密规则
+    # 注意：这里需要使用 sudo rm，因为免密规则已经生效，这行命令在退出时不需要输入密码
     trap 'sudo rm -f /etc/sudoers.d/99-autosetup-tmp 2>/dev/null' EXIT
 
     if ! confirm_action "Are you sure you want to start the installation?"; then
@@ -260,7 +264,7 @@ main() {
     
     sudo touch /tmp/hyprv.tmp
 
-    # Executing operational stages flawlessly with zero pass prompts
+    # 执行后续流程
     setup_pacman_and_yay
     install_all_packages
     copy_config_files

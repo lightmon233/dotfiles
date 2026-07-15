@@ -39,9 +39,15 @@ sudo chmod +x ./autosetup.sh
 > [!NOTE]
 > Do not use sudo to run this script, you will be prompted to give the sudo privilege while the script is running.
 
-## preview
+## Preview
 
-![preview](preview.png)
+### Hyprland
+
+![hyprland preview](static/imgs/hyprland.png)
+
+### I3
+
+![i3 preview](static/imgs/i3wm.png)
 
 ## To-DO List
 

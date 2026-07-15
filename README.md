@@ -47,4 +47,4 @@ sudo chmod +x ./autosetup.sh
 
 - [x] Fix `autosetup.sh` double asking passwd issue.
 - [ ] Migrate hyprland config to lua.
-- [ ] Restore & Repair i3wm configs.
+- [x] Restore & Repair i3wm configs.

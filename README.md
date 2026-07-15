@@ -36,7 +36,7 @@ sudo chmod +x ./autosetup.sh
 ./autosetup.sh
 ```
 
-> [!NOTE]
+> [!ATTENTION]
 > Do not use sudo to run this script, you will be prompted to give the sudo privilege while the script is running.
 
 ## Preview
@@ -48,6 +48,10 @@ sudo chmod +x ./autosetup.sh
 ### I3
 
 ![i3 preview](static/imgs/i3wm.png)
+
+## NOTE
+
+My config file are designed for Thinkpad X230, so you might have to tweak it a little to make it fit your system.
 
 ## To-DO List
 

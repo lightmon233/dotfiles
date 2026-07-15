@@ -15,9 +15,10 @@ INSTALL_STAGE=(
     thunar-archive-plugin file-roller starship papirus-icon-theme lxappearance 
     ttf-jetbrains-mono-nerd xfce4-settings nwg-look sddm
     swaybg pyprland obs-studio cliphist wl-clipboard polkit-gnome 
-    udiskie ueberzug shellcheck w3m imagemagick i3lock polybar 
+    udiskie ueberzug shellcheck w3m imagemagick polybar 
     flameshot mpd linux-zen-headers pipewire-alsa pipewire-pulse wget curl 
-    pokemon-colorscripts-git hyprland
+    pokemon-colorscripts-git hyprland i3lock i3-wm i3blocks i3status
+    picom feh
 )
 
 # Terminal colored status tags
@@ -184,7 +185,6 @@ copy_config_files() {
     echo "-> Copying basic local configuration files..."
     [ -d "./.config" ] && cp -r ./.config/* ~/.config/
     find . -maxdepth 1 -name ".*" ! -name "." ! -name ".." -exec cp -r {} ~/ \;
-    chmod +x ~/.config/waybar/cava-internal.sh
 
     # 5. Zsh & Oh My Zsh Automation
     echo "-> Configuring oh-my-zsh and plugins..."
@@ -202,7 +202,6 @@ copy_config_files() {
     # Overwrite and adjust .zshrc
     [ -f "./.zshrc" ] && cp ./.zshrc ~/.zshrc
     # No need to replace these lines, since they are already included in .zshrc
-    # sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
     # sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc
     
     # 6. Fcitx5 Environment Setup
@@ -220,6 +219,14 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
     git clone https://gitlab.com/imnotpua/grub_gtg.git ~/grub_gtg
     chmod +x ~/grub_gtg/install.sh
     sudo ~/grub_gtg/install.sh
+
+    # 8. Waybar & Polybar Themes
+    echo "-> Installing Bar themes..."
+    chmod +x ~/.config/waybar/cava-internal.sh
+    rm -rf ~/polybar-themes
+    git clone --depth=1 https://github.com/adi1090x/polybar-themes.git ~/polybar-themes
+    chmod +x ~/polybar-themes/setup.sh
+    ~/polybar-themes/setup.sh <<< "1" >> "$INSTLOG" 2>&1
 
     echo -e "$COK - Stage 3: All configuration files successfully deployed!"
 }

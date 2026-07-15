@@ -4,21 +4,43 @@
 # 1. Global Configuration and Package List
 # ==============================================================================
 INSTALL_STAGE=(
-    qt5 fcitx5 fcitx5-im fcitx5-chinese-addons openssh cava fastfetch neovim ranger 
-    rofi alsa-utils xclip kitty wqy-zenhei adobe-source-han-serif-cn-fonts 
-    adobe-source-han-sans-cn-fonts noto-fonts-cjk powerline-fonts 
-    wqy-bitmapfont wqy-microhei wqy-microhei-lite adobe-source-code-pro-fonts 
-    ttf-ms-fonts noto-fonts-emoji google-chrome gparted ksnip 
-    shotgun zsh waybar swaylock wofi wlogout xdg-desktop-portal-hyprland 
-    swappy grim slurp thunar btop firefox thunderbird mpv pamixer pavucontrol 
-    brightnessctl bluez bluez-utils blueman network-manager-applet gvfs 
-    thunar-archive-plugin file-roller starship papirus-icon-theme lxappearance 
-    ttf-jetbrains-mono-nerd xfce4-settings nwg-look sddm
-    swaybg pyprland obs-studio cliphist wl-clipboard polkit-gnome 
-    udiskie ueberzug shellcheck w3m imagemagick polybar 
-    flameshot mpd linux-zen-headers pipewire-alsa pipewire-pulse wget curl 
-    pokemon-colorscripts-git hyprland i3lock i3-wm i3blocks i3status
-    picom feh
+    # --- 基础工具与核心依赖 ---
+    wget curl unzip xclip wl-clipboard libnotify gvfs shellcheck
+
+    # --- 窗口管理器与核心组件 (Hyprland / i3) ---
+    hyprland xdg-desktop-portal-hyprland pyprland
+    i3-wm i3blocks i3status polybar picom feh i3lock swaylock
+
+    # --- 桌面环境配套与外挂组件 ---
+    waybar rofi wofi wlogout swaybg lxappearance nwg-look sddm xfce4-settings
+    polkit-gnome udiskie cliphist network-manager-applet
+
+    # --- 终端、Shell 与开发环境 ---
+    kitty zsh starship neovim nodejs tree-sitter-cli npm
+    fastfetch btop ranger w3m ueberzug imagemagick cava pokemon-colorscripts-git
+
+    # --- 字体与国际化输入法 (中文/Emoji/Nerd) ---
+    qt5 fcitx5 fcitx5-im fcitx5-chinese-addons
+    wqy-zenhei wqy-bitmapfont wqy-microhei wqy-microhei-lite
+    adobe-source-han-serif-cn-fonts adobe-source-han-sans-cn-fonts adobe-source-code-pro-fonts
+    noto-fonts-cjk noto-fonts-emoji powerline-fonts ttf-ms-fonts ttf-jetbrains-mono-nerd
+
+    # --- 音频与蓝牙管理 (PipeWire) ---
+    alsa-utils pamixer pavucontrol pipewire-alsa pipewire-pulse mpd
+    bluez bluez-utils blueman brightnessctl
+
+    # --- 日常应用与文件管理 ---
+    thunar thunar-archive-plugin file-roller gparted
+    firefox thunderbird google-chrome mpv
+
+    # --- 截图、录屏与图像处理 ---
+    flameshot ksnip shotgun swappy grim slurp obs-studio
+
+    # --- 内核头文件 (驱动/特定模块编译所需) ---
+    linux-zen-headers
+
+    # --- 主题外观 ---
+    papirus-icon-theme
 )
 
 # Terminal colored status tags

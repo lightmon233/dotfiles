@@ -240,6 +240,7 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
     rm -rf ~/grub_gtg
     git clone https://gitlab.com/imnotpua/grub_gtg.git ~/grub_gtg
     chmod +x ~/grub_gtg/install.sh
+    cd ~/grub_gtg
     sudo ~/grub_gtg/install.sh
 
     # 8. Waybar & Polybar Themes
@@ -248,7 +249,8 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
     rm -rf ~/polybar-themes
     git clone --depth=1 https://github.com/adi1090x/polybar-themes.git ~/polybar-themes
     chmod +x ~/polybar-themes/setup.sh
-    ~/polybar-themes/setup.sh <<< "1" >> "$INSTLOG" 2>&1
+    cd ~/polybar-themes
+    ~/polybar-themes/setup.sh <<< "1" 2>&1
 
     echo -e "$COK - Stage 3: All configuration files successfully deployed!"
 }

@@ -56,5 +56,5 @@ My config file are designed for Thinkpad X230, so you might have to tweak it a l
 ## To-DO List
 
 - [x] Fix `autosetup.sh` double asking passwd issue.
-- [ ] Migrate hyprland config to lua.
+- [x] Migrate hyprland config to lua.
 - [x] Restore & Repair i3wm configs.

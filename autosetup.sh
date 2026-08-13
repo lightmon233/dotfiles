@@ -11,6 +11,10 @@ INSTALL_STAGE=(
     hyprland xdg-desktop-portal-hyprland pyprland
     i3-wm i3blocks i3status polybar picom feh i3lock swaylock
 
+    # --- suckless(dwm) build dependencies ---
+    libx11 libxft libxinerama freetype2 fontconfig
+    python-pywal16 xdotool
+
     # --- 桌面环境配套与外挂组件 ---
     waybar rofi wofi wlogout swaybg lxappearance nwg-look sddm xfce4-settings
     polkit-gnome udiskie cliphist network-manager-applet dunst
@@ -42,6 +46,14 @@ INSTALL_STAGE=(
     # --- 主题外观 ---
     papirus-icon-theme
 )
+
+# dwm related config
+DWM_REPO="https://github.com/lightmon233/dwm.git"
+DMENU_REPO="https://github.com/lightmon233/dmenu.git"
+DWMBLOCKS_REPO="https://github.com/lightmon233/dwmblocks.git"
+
+SRC_DIR="$HOME/.local/src"
+START_SCRIPT="$HOME/bin/startdwm"
 
 # Terminal colored status tags
 CNT="[\e[1;36mNOTE\e[0m]"       # 青色 (Cyan) - 提示信息
@@ -255,6 +267,100 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
     echo -e "$COK - Stage 3: All configuration files successfully deployed!"
 }
 
+# State 4: install custom built dwm sweets
+install_custom_dwm() {
+  if ! confirm_action "Are you sure to install custom built dwm + dmenu + dwmblocks?"; then
+    return 0
+  fi
+
+  echo -e "$CNT - start installing dwm sweets..."
+
+  mkdir -p "$SRC_DIR"
+  mkdir -p "$HOME/bin"
+
+  clone_or_update() {
+    local name=$1
+    local repo=$2
+    local dir="$SRC_DIR/$name"
+
+    if [ -d "$dir/.git" ]; then
+      echo -e "$CNT - updaing $name ..."
+      git -C "$dir" pull
+    else
+      echo -e "$CNT - cloning $name ..."
+      git clone "$repo" "$dir"
+    fi
+  }
+
+  clone_or_update "dwm" "$DWM_REPO"
+  clone_or_update "dmenu" "$DMENU_REPO"
+  clone_or_update "dwmblocks" "$DWMBLOCKS_REPO"
+
+  build_and_install() {
+    local name=$1
+    local dir="$SRC_DIR/$name"
+
+    echo -e "$CNT - building & installing $name ..."
+    cd "$dir" || return 1
+
+    # [ -f "config.def.h" ] && [ ! -f "config.h" ] && cp config.def.h config.h
+    # [ -f "blocks.def.h" ] && [ ! -f "blocks.h" ] && cp blocks.def.h blocks.h
+
+    make clean
+    sudo make install
+    echo -e "$COK - $name installation complete."
+  }
+
+  build_and_install "dwm"
+  build_and_install "dmenu"
+  build_and_install "dwmblocks"
+
+  echo -e "$CNT - creating startup script $START_SCRIPT ..."
+  cat > "$START_SCRIPT" << 'EOF'
+#!/bin/sh
+WALLPAPER_DIR="$HOME/Wallpapers"
+FEHBG="$HOME/.fehbg"
+
+if [ -x "$FEHBG" ]; then
+  echo "Found record of last wallpaper, now reloading..."
+  # "$FEHBG" &
+  wal -R
+else
+  echo "Not finding .fehbg record, setting up random wallpaper or pure color as fallback..."
+  if [ -d "$WALLPAPER_DIR" ]; then
+    # feh --bg-fill --randomize "$WALLPAPER_DIR" &
+    wal -i "$WALLPAPER_DIR" &
+    xrdb -merge ~/.cache/wal/colors.Xresources
+    xdotool key alt+F5
+  else 
+    mkdir -p "$WALLPAPER_DIR"
+    feh --bg-color "#2e3440" &
+  fi
+fi
+
+picom -b &
+dunst &
+dwmblocks &
+dwm
+EOF
+
+  chmod +x "$START_SCRIPT"
+  echo -e "$COK - startup script created"
+
+  echo -e "$CNT - creating SDDM session file..."
+  sudo tee /usr/share/xsessions/dwm.desktop > /dev/null << EOF
+[Desktop Entry]
+Name=dwm
+Comment=Dynamic Window Manager
+Exec=$START_SCRIPT
+TryExec=$START_SCRIPT
+Type=XSession
+DesktopNames=dwm
+EOF
+
+  echo -e "$COK - SDDM session file created: /usr/share/xsessions/dwm.desktop"
+}
+
 # ==============================================================================
 # 4. Main Script Execution Flow
 # ==============================================================================
@@ -300,6 +406,7 @@ main() {
     setup_pacman_and_yay
     install_all_packages
     copy_config_files
+    install_custom_dwm
 
     echo -e "\n$COK - All installations and configurations are completed! Reboot is highly recommended. 🎉"
 }

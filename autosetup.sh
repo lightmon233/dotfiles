@@ -341,6 +341,7 @@ fi
 picom -b &
 dunst &
 dwmblocks &
+fcitx5 &
 dwm
 EOF
 

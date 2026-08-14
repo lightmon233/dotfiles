@@ -49,6 +49,10 @@ sudo chmod +x ./autosetup.sh
 
 ![i3 preview](static/imgs/i3wm.png)
 
+### DWM
+
+![dwm preview](static/imgs/dwm.png)
+
 ## NOTE
 
 My config file are designed for Thinkpad X230, so you might have to tweak it a little to make it fit your system.

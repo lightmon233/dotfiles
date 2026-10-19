@@ -1,8 +1,8 @@
 hl.monitor({
   output = "",
-  mode = "1366x768",
+  mode = "prefer",
   position = "auto",
-  scale = 1
+  scale = 1.25
 })
 
 local terminal = "kitty"
@@ -20,8 +20,24 @@ hl.on("hyprland.start", function ()
   hl.exec_cmd("wl-paste --type text --watch cliphist store")
   hl.exec_cmd("wl-paste --type image --watch cliphist store")
   hl.exec_cmd("pypr")
-  hl.exec_cmd("sleep 10 && swww init")
-  hl.exec_cmd("swaybg -i $(find ~/Wallpapers -type f | shuf -n 1) -m fill")
+  hl.exec_cmd([[
+    mkdir -p "$HOME/.cache"
+    WALLPAPER_STATE="$HOME/.cache/current-wallpaper"
+    WALLPAPER=""
+
+    if [ -f "$WALLPAPER_STATE" ]; then
+      WALLPAPER="$(cat "$WALLPAPER_STATE")"
+    fi
+
+    if [ -z "$WALLPAPER" ] || [ ! -f "$WALLPAPER" ]; then
+      WALLPAPER="$(find "$HOME/Wallpapers" -type f | shuf -n 1)"
+    fi
+
+    if [ -n "$WALLPAPER" ] && [ -f "$WALLPAPER" ]; then
+      printf '%s\n' "$WALLPAPER" > "$WALLPAPER_STATE"
+      swaybg -i "$WALLPAPER" -m fill &
+    fi
+  ]])
 end)
 
 hl.env("XCURSOR_SIZE", "24")
@@ -138,8 +154,19 @@ hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-")
 
 hl.bind(main_mod .. " + P", hl.dsp.exec_cmd('grim -g "$(slurp)"'))
 hl.bind(main_mod .. " + SHIFT + P", hl.dsp.exec_cmd("grim"))
-hl.bind(main_mod .. " + B", hl.dsp.exec_cmd("killall swaybg; swaybg -i $(find ~/Wallpapers -type f | shuf -n 1) -m fill"))
 hl.bind(main_mod .. " + A", hl.dsp.exec_cmd("pypr toggle term"))
+
+hl.bind(main_mod .. " + N", hl.dsp.exec_cmd([[
+  WALLPAPER="$(find "$HOME/Wallpapers" -type f | shuf -n 1)"
+
+  if [ -n "$WALLPAPER" ] && [ -f "$WALLPAPER" ]; then
+    mkdir -p "$HOME/.cache"
+    printf '%s\n' "$WALLPAPER" > "$HOME/.cache/current-wallpaper"
+    pkill -x swaybg
+    swaybg -i "$WALLPAPER" -m fill &
+  fi
+]]))
+
 local dropterm = "^(kitty-dropterm)$"
 hl.window_rule({
   name = "dropterm",

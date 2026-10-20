@@ -45,6 +45,9 @@ INSTALL_STAGE=(
 
     # --- 主题外观 ---
     papirus-icon-theme
+
+    # --- 自动深色模式 (Chrome prefers-color-scheme) ---
+    darkman xdg-desktop-portal xdg-desktop-portal-gtk gnome-themes-extra
 )
 
 # dwm related config
@@ -267,6 +270,77 @@ GLFW_IM_MODULE=ibus" | sudo tee -a /etc/environment > /dev/null
     echo -e "$COK - Stage 3: All configuration files successfully deployed!"
 }
 
+# Stage: 自动深色模式 (darkman + XDG Portal，主要让 Chrome 按时间自动切换)
+setup_darkman_auto_dark() {
+    if ! confirm_action "配置 darkman 自动深色模式（Chrome 可根据日出日落自动切换）？"; then
+        return 0
+    fi
+
+    echo -e "$CNT - 配置 darkman + XDG Desktop Portal 自动深色模式..."
+
+    # 1. Portal 配置（优先使用 darkman 提供 color-scheme）
+    mkdir -p ~/.config/xdg-desktop-portal
+    cat > ~/.config/xdg-desktop-portal/portals.conf << 'EOF'
+[preferred]
+default=hyprland;gtk
+org.freedesktop.impl.portal.Settings=darkman
+EOF
+    echo -e "$COK - portals.conf 已写入"
+
+    # 2. darkman 配置文件（请根据实际位置修改 lat/lng）
+    mkdir -p ~/.config/darkman
+    cat > ~/.config/darkman/config.yaml << 'EOF'
+# 手动指定经纬度（推荐，最稳定）
+# 示例：上海 ≈ 31.23, 121.47
+lat: 31.23
+lng: 121.47
+
+# 如果想用 geoclue 自动定位，取消下面注释并注释掉 lat/lng
+# usegeoclue: true
+
+portal: true   # 必须开启，Chrome 通过 Portal 读取 prefers-color-scheme
+EOF
+    echo -e "$COK - darkman/config.yaml 已写入（请检查并修改经纬度）"
+
+    # 3. 创建切换脚本（同时设置 gsettings color-scheme，兼容 GTK 应用）
+    mkdir -p ~/.local/share/dark-mode.d ~/.local/share/light-mode.d
+
+    cat > ~/.local/share/dark-mode.d/color-scheme.sh << 'EOF'
+#!/bin/sh
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+# 可选：同时切换主题
+# gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+EOF
+
+    cat > ~/.local/share/light-mode.d/color-scheme.sh << 'EOF'
+#!/bin/sh
+gsettings set org.gnome.desktop.interface color-scheme prefer-light
+# gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
+EOF
+
+    chmod +x ~/.local/share/dark-mode.d/* ~/.local/share/light-mode.d/*
+    echo -e "$COK - dark/light-mode 切换脚本已创建"
+
+    # 4. 启用 darkman 用户服务
+    systemctl --user enable --now darkman.service &>> "$INSTLOG"
+    if systemctl --user is-active --quiet darkman.service; then
+        echo -e "$COK - darkman.service 已启用并运行"
+    else
+        echo -e "$CWR - darkman.service 启动可能失败，请手动检查: systemctl --user status darkman"
+    fi
+
+    # 5. 重启 portal 服务让配置生效
+    systemctl --user restart xdg-desktop-portal.service 2>/dev/null || true
+    systemctl --user restart xdg-desktop-portal-hyprland.service 2>/dev/null || true
+
+    echo -e "$COK - 自动深色模式配置完成！"
+    echo -e "$CNT - 常用命令："
+    echo -e "      darkman get          # 查看当前模式"
+    echo -e "      darkman toggle       # 手动切换"
+    echo -e "      darkman set dark     # 强制暗色"
+    echo -e "$CAT - 记得修改 ~/.config/darkman/config.yaml 里的 lat/lng 为你真实位置"
+}
+
 # State 4: install custom built dwm sweets
 install_custom_dwm() {
   if ! confirm_action "Are you sure to install custom built dwm + dmenu + dwmblocks?"; then
@@ -406,6 +480,7 @@ main() {
     # 执行后续流程
     setup_pacman_and_yay
     install_all_packages
+    setup_darkman_auto_dark
     copy_config_files
     install_custom_dwm
 

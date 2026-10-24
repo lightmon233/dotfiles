@@ -243,8 +243,7 @@ copy_config_files() {
     
     # 6. Fcitx5 Environment Setup
     echo "-> Setting up fcitx5 environment variables..."
-    echo "GTK_IM_MODULE=fcitx
-QT_IM_MODULE=fcitx
+    echo "QT_IM_MODULE=fcitx
 XMODIFIERS=@im=fcitx
 INPUT_METHOD=fcitx
 SDL_IM_MODULE=fcitx
